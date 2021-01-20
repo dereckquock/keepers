@@ -1,33 +1,12 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import teams from '../data/teams-2020';
+import { teams } from '../data/teams-2021';
 
-// map managers to props
-const managers = [
-  'dereck',
-  'myd',
-  'marc',
-  'dru',
-  'lim',
-  'ejay',
-  'ray',
-  'aaron',
-  'kevin',
-  'ry1t',
-  'bikey mrown',
-  'fatima',
-].map((manager, index) => ({
-  key: manager,
-  manager,
-  value: manager,
-  players: teams[index + 1],
-}));
-
-function Team({ manager, players }) {
+function Team({ manager, team }) {
   return (
     <div>
       <h2 style={{ marginTop: '2.5rem' }}>{manager}</h2>
-      {players.map(({ player, cost }) => (
+      {team.map(({ player, cost }) => (
         <div key={player} className={styles.player}>
           <div>{player}</div>
           <div>${cost}</div>
@@ -50,13 +29,17 @@ export default function Home() {
       <main>
         <h1>{`${new Date().getFullYear()} KEEPERS`}</h1>
 
+        <label htmlFor="filter" style={{ marginRight: 10 }}>
+          Filter manager
+        </label>
         <select
+          id="filter"
           className={styles.dropdown}
           value={filter}
           onChange={(event) => setFilter(event.target.value)}
         >
-          <option value="">Filter manager</option>
-          {managers.map(({ manager }) => (
+          <option value="">All managers</option>
+          {teams.map(({ manager }) => (
             <option key={manager} value={manager}>
               {manager}
             </option>
@@ -64,10 +47,10 @@ export default function Home() {
         </select>
 
         <section>
-          {managers
+          {teams
             .filter(({ manager }) => (filter ? manager === filter : true))
-            .map((props) => (
-              <Team {...props} />
+            .map((data) => (
+              <Team {...data} />
             ))}
         </section>
       </main>
