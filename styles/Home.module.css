@@ -17,8 +17,10 @@
 .player {
   margin-bottom: 0.5rem;
   padding: 1rem 1.25rem;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: center;
   background: var(--gray);
   border-radius: 0.5rem;
 }
@@ -28,7 +30,20 @@
   border: 0;
 }
 
+.player.cantKeep,
+.player:nth-child(even).cantKeep {
+  background: #a00;
+}
+
 .player:hover {
   background: #b3995d;
   transition: all 0.3s ease-out;
+}
+
+.keeps {
+  text-align: center;
+}
+
+.cost {
+  text-align: right;
 }
