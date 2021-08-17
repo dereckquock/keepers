@@ -285,7 +285,7 @@ export const teams = [
         player: 'Calvin Ridley',
         cost: 14,
         yearsPlayed: 2,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Darrell Henderson Jr.',
@@ -635,13 +635,13 @@ export const teams = [
         player: 'DK Metcalf',
         cost: 14,
         yearsPlayed: 2,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Terry McLaurin',
         cost: 14,
         yearsPlayed: 2,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Austin Ekeler',
