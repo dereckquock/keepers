@@ -6,7 +6,7 @@ export const teams = [
         player: 'Lamar Jackson',
         cost: 14,
         yearsPlayed: 2,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'A.J. Brown',
@@ -48,7 +48,7 @@ export const teams = [
         player: 'Keenan Allen',
         cost: 12,
         yearsPlayed: 1,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Kenny Golladay',
