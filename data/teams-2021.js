@@ -362,13 +362,13 @@ export const teams = [
         player: 'Russell Wilson',
         cost: 14,
         yearsPlayed: 2,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Stefon Diggs',
         cost: 17,
         yearsPlayed: 1,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Adam Thielen',
@@ -819,7 +819,7 @@ export const teams = [
         player: 'CeeDee Lamb',
         cost: 20,
         yearsPlayed: 1,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Melvin Gordon III',
@@ -849,7 +849,7 @@ export const teams = [
         player: 'Chase Claypool',
         cost: 14,
         yearsPlayed: 1,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Marquise Brown',
