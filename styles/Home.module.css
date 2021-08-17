@@ -19,7 +19,7 @@
   padding: 1rem 1.25rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 1.25rem;
   align-items: center;
   background: var(--gray);
   border-radius: 0.5rem;
@@ -33,6 +33,12 @@
 .player.cantKeep,
 .player:nth-child(even).cantKeep {
   background: #a00;
+}
+
+.player.isSelected {
+  background: #347d39;
+  box-shadow: 0 0 8px 2px #347d39;
+  font-weight: 700;
 }
 
 .player:hover {

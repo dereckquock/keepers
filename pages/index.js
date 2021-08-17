@@ -8,22 +8,24 @@ function Team({ manager, team }) {
   return (
     <div>
       <h2 style={{ marginTop: '2.5rem' }}>{manager}</h2>
-      {team.map(({ player, cost, yearsPlayed }) => {
+      {team.map(({ player, cost, yearsPlayed, isSelectedKeeper }) => {
         const cantKeep = yearsPlayed > 2;
         const keepsLeft = 3 - yearsPlayed;
+        const keepStatus = cantKeep
+          ? 'no keeping!'
+          : `${keepsLeft} mo' ${keepsLeft > 1 ? 'keeps' : 'keep'}`;
 
         return (
           <div
             key={player}
             className={classNames(styles.player, {
               [styles.cantKeep]: cantKeep,
+              [styles.isSelected]: isSelectedKeeper,
             })}
           >
             <div>{player}</div>
             <div className={styles.keeps}>
-              {cantKeep
-                ? 'no keeping!'
-                : `${keepsLeft} mo' ${keepsLeft > 1 ? 'keeps' : 'keep'}`}
+              {isSelectedKeeper ? 'selected as keeper' : keepStatus}
             </div>
             <div className={styles.cost}>${cost ?? 'TBD'}</div>
           </div>
