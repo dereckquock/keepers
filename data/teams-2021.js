@@ -469,7 +469,7 @@ export const teams = [
         player: 'Josh Jacobs',
         cost: 17,
         yearsPlayed: 2,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Jeff Wilson Jr.',
@@ -481,7 +481,7 @@ export const teams = [
         player: 'Darren Waller',
         cost: 14,
         yearsPlayed: 2,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Robby Anderson',
