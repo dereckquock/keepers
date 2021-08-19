@@ -190,7 +190,7 @@ export const teams = [
         player: 'Cooper Kupp',
         cost: 23,
         yearsPlayed: 1,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Allen Robinson II',
@@ -232,7 +232,7 @@ export const teams = [
         player: 'James Robinson',
         cost: 18,
         yearsPlayed: 1,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'Kareem Hunt',
