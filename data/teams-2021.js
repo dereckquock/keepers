@@ -890,7 +890,7 @@ export const teams = [
         player: 'Kyler Murray',
         cost: 14,
         yearsPlayed: 2,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'DeAndre Hopkins',
@@ -908,7 +908,7 @@ export const teams = [
         player: 'Derrick Henry',
         cost: 56,
         yearsPlayed: 1,
-        isSelectedKeeper: false,
+        isSelectedKeeper: true,
       },
       {
         player: 'J.K. Dobbins',
