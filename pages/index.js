@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import classNames from 'classnames';
 import styles from '../styles/Home.module.css';
 import { teams } from '../data/teams-2021';
@@ -46,14 +47,19 @@ export default function Home() {
       </Head>
 
       <main>
-        <h1>{`${new Date().getFullYear()} KEEPERS`}</h1>
+        <header className={styles.header}>
+          <h1>{`${new Date().getFullYear()} KEEPERS`}</h1>
+          <Link href="/benches">
+            <a>🔥 Hot Benches 👉</a>
+          </Link>
+        </header>
 
         <label htmlFor="filter" style={{ marginRight: 10 }}>
           Filter manager
         </label>
         <select
           id="filter"
-          className={styles.dropdown}
+          className={styles.formControl}
           value={filter}
           onChange={(event) => setFilter(event.target.value)}
         >

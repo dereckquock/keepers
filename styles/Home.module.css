@@ -5,13 +5,38 @@
   padding: 1rem;
 }
 
-.dropdown {
-  padding: 0.5rem;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.formControl {
+  padding: 0.5rem 0.75rem;
   font-family: monospace, sans-serif;
   font-size: 1rem;
   background: var(--gray);
   color: var(--light);
+  border: 1px solid var(--light);
   border-radius: 0.5rem;
+}
+
+.button {
+  padding: 0.75rem 1em;
+  font-family: monospace, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 700;
+  background: var(--gold);
+  color: var(--light);
+  border: 1px solid var(--light);
+  border-radius: 10rem;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+
+.button:hover {
+  filter: brightness(0.9);
 }
 
 .player {
@@ -32,17 +57,17 @@
 
 .player.cantKeep,
 .player:nth-child(even).cantKeep {
-  background: #a00;
+  background: var(--red);
 }
 
 .player.isSelected {
-  background: #347d39;
-  box-shadow: 0 0 8px 2px #347d39;
+  background: var(--green);
+  box-shadow: 0 0 8px 2px var(--green);
   font-weight: 700;
 }
 
 .player:hover {
-  background: #b3995d;
+  background: var(--gold);
   transition: all 0.3s ease-out;
 }
 
@@ -52,4 +77,8 @@
 
 .cost {
   text-align: right;
+}
+
+.avatar {
+  border-radius: 25px;
 }
