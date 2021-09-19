@@ -33,7 +33,7 @@ async function fetchHotBench({ leagueId, weekNumber }) {
       ...rosterMap[roster_id],
       avatar: `https://sleepercdn.com/avatars/thumbs/${avatar}`,
       displayName: display_name,
-      benchPoints,
+      benchPoints: Math.round(100 * benchPoints) / 100,
     };
 
     return rosterMap;
@@ -94,7 +94,7 @@ function HotBench({ leagueId, weekNumber }) {
             />
             <span style={{ fontSize: '1.25rem' }}>{displayName}</span> —
             <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-              {points}
+              {points.toFixed(2)}
             </span>
           </div>
         );
