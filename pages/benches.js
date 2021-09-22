@@ -1,15 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useQuery, useMutation } from 'react-query';
 import styles from '../styles/Home.module.css';
 
-async function fetchHotBench({ leagueId, weekNumber }) {
+async function fetchHotBench({ leagueId, weekNumber, rosters }) {
   const matchups = await fetch(
     `https://api.sleeper.app/v1/league/${leagueId}/matchups/${weekNumber}`
-  ).then((res) => res.json());
-  const rosters = await fetch(
-    `https://api.sleeper.app/v1/league/${leagueId}/rosters`
   ).then((res) => res.json());
   const users = await fetch(
     `https://api.sleeper.app/v1/league/${leagueId}/users`
@@ -53,15 +50,15 @@ async function fetchHotBench({ leagueId, weekNumber }) {
   return sortedResults;
 }
 
-function HotBench({ leagueId, weekNumber }) {
+function HotBench({ leagueId, weekNumber, rosters }) {
   const { isLoading, data } = useQuery(
     ['bench', { leagueId, weekNumber }],
     async () => {
-      const bench = await fetchHotBench({ leagueId, weekNumber });
+      const bench = await fetchHotBench({ leagueId, weekNumber, rosters });
 
       return bench;
     },
-    { enabled: !!leagueId }
+    { enabled: !!leagueId && rosters.length > 0 }
   );
 
   if (!leagueId) {
@@ -106,6 +103,26 @@ function HotBench({ leagueId, weekNumber }) {
 export default function Benches() {
   const [leagueId, setLeagueId] = useState('721172044753993728');
   const [weekNumber, setWeekNumber] = useState(1);
+  const { isLoading: isLoadingRosters, data: rosters } = useQuery(
+    ['rosters', { leagueId }],
+    async () => {
+      const data = await fetch(
+        `https://api.sleeper.app/v1/league/${leagueId}/rosters`
+      ).then((res) => res.json());
+
+      return data;
+    },
+    { enabled: !!leagueId }
+  );
+  const { wins, ties, losses } = rosters?.[0]?.settings || {};
+  const currentWeekNumber = Math.max(1, wins + ties + losses);
+
+  // set the current week number once we fetch the rosters and can calculate the current week based on games played
+  useEffect(() => {
+    if (currentWeekNumber) {
+      setWeekNumber(currentWeekNumber);
+    }
+  }, [currentWeekNumber]);
 
   return (
     <div className={styles.container}>
@@ -142,27 +159,27 @@ export default function Benches() {
             value={weekNumber}
             onChange={({ currentTarget }) => setWeekNumber(currentTarget.value)}
           >
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
+            {isLoadingRosters ? (
+              <option value="loading">Loading...</option>
+            ) : (
+              [...Array(17).keys()].map((index) => (
+                <option key={index} value={index + 1}>
+                  {index + 1}
+                </option>
+              ))
+            )}
           </select>
         </div>
 
-        <HotBench leagueId={leagueId} weekNumber={weekNumber} />
+        {isLoadingRosters ? (
+          'Loading...'
+        ) : (
+          <HotBench
+            leagueId={leagueId}
+            weekNumber={weekNumber}
+            rosters={rosters}
+          />
+        )}
       </main>
     </div>
   );
