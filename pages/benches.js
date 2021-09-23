@@ -4,12 +4,9 @@ import Image from 'next/image';
 import { useQuery, useMutation } from 'react-query';
 import styles from '../styles/Home.module.css';
 
-async function fetchHotBench({ leagueId, weekNumber, rosters }) {
+async function fetchHotBench({ leagueId, weekNumber, rosters, users }) {
   const matchups = await fetch(
     `https://api.sleeper.app/v1/league/${leagueId}/matchups/${weekNumber}`
-  ).then((res) => res.json());
-  const users = await fetch(
-    `https://api.sleeper.app/v1/league/${leagueId}/users`
   ).then((res) => res.json());
 
   const results = matchups.reduce((rosterMap, roster) => {
@@ -50,11 +47,16 @@ async function fetchHotBench({ leagueId, weekNumber, rosters }) {
   return sortedResults;
 }
 
-function HotBench({ leagueId, weekNumber, rosters }) {
+function HotBench({ leagueId, weekNumber, rosters, users }) {
   const { isLoading, data } = useQuery(
     ['bench', { leagueId, weekNumber }],
     async () => {
-      const bench = await fetchHotBench({ leagueId, weekNumber, rosters });
+      const bench = await fetchHotBench({
+        leagueId,
+        weekNumber,
+        rosters,
+        users,
+      });
 
       return bench;
     },
@@ -102,7 +104,17 @@ function HotBench({ leagueId, weekNumber, rosters }) {
 
 export default function Benches() {
   const [leagueId, setLeagueId] = useState('721172044753993728');
-  const [weekNumber, setWeekNumber] = useState(1);
+  const { isLoading: isLoadingUsers, data: users } = useQuery(
+    ['users', { leagueId }],
+    async () => {
+      const users = await fetch(
+        `https://api.sleeper.app/v1/league/${leagueId}/users`
+      ).then((res) => res.json());
+
+      return users;
+    },
+    { enabled: !!leagueId }
+  );
   const { isLoading: isLoadingRosters, data: rosters } = useQuery(
     ['rosters', { leagueId }],
     async () => {
@@ -114,6 +126,7 @@ export default function Benches() {
     },
     { enabled: !!leagueId }
   );
+  const [weekNumber, setWeekNumber] = useState(1);
   const { wins, ties, losses } = rosters?.[0]?.settings || {};
   const currentWeekNumber = Math.max(1, wins + ties + losses);
 
@@ -171,13 +184,14 @@ export default function Benches() {
           </select>
         </div>
 
-        {isLoadingRosters ? (
+        {isLoadingUsers || isLoadingRosters ? (
           'Loading...'
         ) : (
           <HotBench
             leagueId={leagueId}
             weekNumber={weekNumber}
             rosters={rosters}
+            users={users}
           />
         )}
       </main>
