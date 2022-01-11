@@ -4,61 +4,48 @@ import Image from 'next/image';
 import { useQuery, useMutation } from 'react-query';
 import styles from '../styles/Home.module.css';
 
-async function fetchHotBench({ leagueId, weekNumber, rosters, users }) {
+async function fetchScores({ leagueId, weekNumber, rosters, users }) {
   const matchups = await fetch(
     `https://api.sleeper.app/v1/league/${leagueId}/matchups/${weekNumber}`
   ).then((res) => res.json());
 
-  const results = matchups.reduce((rosterMap, roster) => {
-    const { roster_id, starters, players_points } = roster;
+  const results = matchups.map((roster) => {
+    const { roster_id, starters, players_points, points } = roster;
     const userId = rosters.find((r) => r.roster_id === roster_id)?.owner_id;
     const { avatar, display_name } =
       users.find((user) => user.user_id === userId) || {};
-
-    // filter out the starters to get the bench players
-    const bench = Object.entries(players_points).filter(
-      ([key]) => !starters.includes(key.toString())
+    const fullRosterPoints = Object.values(players_points).reduce(
+      (total, points) => total + points,
+      0
     );
 
     // sum the bench players' points
-    const benchPoints = bench.reduce((points, [, value]) => points + value, 0);
+    const benchPoints = fullRosterPoints - points;
 
-    rosterMap[roster_id] = {
-      ...rosterMap[roster_id],
+    return {
       avatar: `https://sleepercdn.com/avatars/thumbs/${avatar}`,
       displayName: display_name,
+      points,
       benchPoints: Math.round(100 * benchPoints) / 100,
     };
+  });
 
-    return rosterMap;
-  }, {});
-
-  const sortedResults = Object.entries(results)
-    .sort(
-      ([, { benchPoints: benchA }], [, { benchPoints: benchB }]) =>
-        benchB - benchA
-    )
-    .map(([, { avatar, displayName, benchPoints }]) => ({
-      avatar,
-      displayName,
-      points: benchPoints,
-    }));
-
-  return sortedResults;
+  return {
+    starters: [...results].sort((a, b) => b.points - a.points),
+    benches: [...results].sort((a, b) => b.benchPoints - a.benchPoints),
+  };
 }
 
-function HotBench({ leagueId, weekNumber, rosters, users }) {
+function Scores({ leagueId, weekNumber, rosters, users }) {
   const { isLoading, data } = useQuery(
-    ['bench', { leagueId, weekNumber }],
+    ['points', { leagueId, weekNumber }],
     async () => {
-      const bench = await fetchHotBench({
+      return fetchScores({
         leagueId,
         weekNumber,
         rosters,
         users,
       });
-
-      return bench;
     },
     { enabled: !!leagueId && rosters.length > 0 }
   );
@@ -72,37 +59,75 @@ function HotBench({ leagueId, weekNumber, rosters, users }) {
   }
 
   return (
-    <div>
-      {data.map(({ avatar, displayName, points }, index) => {
-        return (
-          <div
-            key={index}
-            style={{
-              marginBottom: '2rem',
-              display: 'flex',
-              gap: '1rem',
-              alignItems: 'center',
-            }}
-          >
-            <Image
-              src={avatar}
-              alt="Avatar image"
-              width={50}
-              height={50}
-              className={styles.avatar}
-            />
-            <span style={{ fontSize: '1.25rem' }}>{displayName}</span> —
-            <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-              {points.toFixed(2)}
-            </span>
-          </div>
-        );
-      })}
+    <div
+      style={{
+        display: 'flex',
+        gap: '4rem',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+      }}
+    >
+      <div>
+        <h2>Starters</h2>
+        {data.starters.map(({ avatar, displayName, points }, index) => {
+          return (
+            <div
+              key={index}
+              style={{
+                marginBottom: '2rem',
+                display: 'flex',
+                gap: '1rem',
+                alignItems: 'center',
+              }}
+            >
+              <Image
+                src={avatar}
+                alt="Avatar image"
+                width={50}
+                height={50}
+                className={styles.avatar}
+              />
+              <span style={{ fontSize: '1.25rem' }}>{displayName}</span> —
+              <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>
+                {points.toFixed(2)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <div>
+        <h2>Benches</h2>
+        {data.benches.map(({ avatar, displayName, benchPoints }, index) => {
+          return (
+            <div
+              key={index}
+              style={{
+                marginBottom: '2rem',
+                display: 'flex',
+                gap: '1rem',
+                alignItems: 'center',
+              }}
+            >
+              <Image
+                src={avatar}
+                alt="Avatar image"
+                width={50}
+                height={50}
+                className={styles.avatar}
+              />
+              <span style={{ fontSize: '1.25rem' }}>{displayName}</span> —
+              <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>
+                {benchPoints.toFixed(2)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-export default function Benches() {
+export default function TopPoints() {
   const [leagueId, setLeagueId] = useState('721172044753993728');
   const { isLoading: isLoadingUsers, data: users } = useQuery(
     ['users', { leagueId }],
@@ -145,7 +170,9 @@ export default function Benches() {
       </Head>
 
       <main>
-        <h1 className={styles.title}>🔥 Hot Benches (╯°□°)╯︵ ┻━┻ 🔥</h1>
+        <h1 className={styles.title}>
+          🔥 Points &amp; Benches (╯°□°)╯︵ ┻━┻ 🔥
+        </h1>
         <div>
           <label htmlFor="leagueId" style={{ marginRight: 10 }}>
             League ID
@@ -175,7 +202,7 @@ export default function Benches() {
             {isLoadingRosters ? (
               <option value="loading">Loading...</option>
             ) : (
-              [...Array(17).keys()].map((index) => (
+              [...Array(14).keys()].map((index) => (
                 <option key={index} value={index + 1}>
                   {index + 1}
                 </option>
@@ -187,7 +214,7 @@ export default function Benches() {
         {isLoadingUsers || isLoadingRosters ? (
           'Loading...'
         ) : (
-          <HotBench
+          <Scores
             leagueId={leagueId}
             weekNumber={weekNumber}
             rosters={rosters}

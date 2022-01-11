@@ -49,8 +49,8 @@ export default function Home() {
       <main>
         <header className={styles.header}>
           <h1>{`${new Date().getFullYear()} KEEPERS`}</h1>
-          <Link href="/benches">
-            <a>🔥 Hot Benches 👉</a>
+          <Link href="/points">
+            <a className="button">🔥💯 Top Scorers 👉</a>
           </Link>
         </header>
 

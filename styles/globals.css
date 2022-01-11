@@ -17,11 +17,27 @@ body {
   color: var(--light);
 }
 
+* {
+  box-sizing: border-box;
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
+.button {
+  cursor: pointer;
+  background-color: var(--gold);
+  color: var(--light);
+  font-weight: 700;
+  font-size: 1.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease-out;
+}
+
+.button:hover,
+.button:active {
+  transform: scale(1.05) rotate(1deg);
 }
