@@ -1,7 +1,13 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 import '../styles/globals.css';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      notifyOnChangeProps: 'tracked',
+    },
+  },
+});
 
 function MyApp({ Component, pageProps }) {
   return (
