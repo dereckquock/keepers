@@ -29,12 +29,13 @@ a {
 .button {
   cursor: pointer;
   background-color: var(--gold);
+  border: none;
   color: var(--light);
   font-weight: 700;
   font-size: 1.25rem;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  transition: all 0.3s ease-out;
+  transition: transform 0.15s ease-out;
 }
 
 .button:hover,
