@@ -1,34 +1,77 @@
-import React from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
 import classNames from 'classnames';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
+import playerAuctionValues from '../data/players-2022';
+import { usePlayers } from '../queries/usePlayers';
+import { usePreviousDraftResults } from '../queries/usePreviousDraftResults';
+import { useRosters } from '../queries/useRosters';
+import { useUsers } from '../queries/useUsers';
 import styles from '../styles/Home.module.css';
-import { teams } from '../data/teams-2021';
 
-function Team({ manager, team }) {
+const leagueId = '721172044753993728';
+
+function Team({ user_id, display_name, avatar, metadata }) {
+  const { isLoadingPlayers, players } = usePlayers();
+  const { isLoadingRosters, rosters } = useRosters();
+  const { isLoadingPreviousDraftResults, previousDraftResults } =
+    usePreviousDraftResults({ leagueId, user_id });
+
+  if (isLoadingPlayers || isLoadingRosters || isLoadingPreviousDraftResults) {
+    return <div>Loading...</div>;
+  }
+
+  const previousDraftResultsPlayerIds = previousDraftResults.map(
+    (pick) => pick.player_id
+  );
+  const roster = rosters.find((roster) => roster.owner_id === user_id);
+
   return (
     <div>
-      <h2 style={{ marginTop: '2.5rem' }}>{manager}</h2>
-      {team.map(({ player, cost, yearsPlayed, isSelectedKeeper }) => {
-        const cantKeep = yearsPlayed > 2;
-        const keepsLeft = 3 - yearsPlayed;
-        const keepStatus = cantKeep
-          ? 'no keeping!'
-          : `${keepsLeft} mo' ${keepsLeft > 1 ? 'keeps' : 'keep'}`;
+      <h2
+        style={{
+          marginTop: '2.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+        }}
+      >
+        <Image
+          src={`https://sleepercdn.com/avatars/thumbs/${avatar}`}
+          alt="Avatar image"
+          width={50}
+          height={50}
+          className={styles.avatar}
+        />
+        <span>{display_name}</span>
+        {metadata.team_name ? <span> | {metadata.team_name}</span> : null}
+      </h2>
+      {roster.players.map((playerId) => {
+        const player = players[playerId];
+        const playerName = `${player.first_name} ${player.last_name}`;
+        const cost = previousDraftResultsPlayerIds.includes(playerId)
+          ? `$${playerAuctionValues[playerName]}`
+          : 'TBD';
+
+        /**
+         * calculate the auction value cost for the player
+         *
+         * 1. if the player was drafted (player was in previous draft results),
+         *    use the calculated draft values from `data/players-<DRAFT_YEAR>.js`
+         * 2. if the player was undrafted, use the current average auction value
+         *    from fantasypros https://draftwizard.fantasypros.com/editor/createFromProjections.jsp?sport=nfl&scoringSystem=HALF&showAuction=Y&teams=12&tb=200&QB=1&RB=2&WR=2&TE=1&DST=1&K=1&BN=5&WR/RB/TE=1
+         */
 
         return (
           <div
-            key={player}
+            key={playerId}
             className={classNames(styles.player, {
-              [styles.cantKeep]: cantKeep,
-              [styles.isSelected]: isSelectedKeeper,
+              [styles.isSelected]: false, // set if player is selected in player config
             })}
           >
-            <div>{player}</div>
-            <div className={styles.keeps}>
-              {isSelectedKeeper ? 'selected as keeper' : keepStatus}
-            </div>
-            <div className={styles.cost}>${cost ?? 'TBD'}</div>
+            <div>{playerName}</div>
+            <div className={styles.cost}>{cost}</div>
           </div>
         );
       })}
@@ -37,7 +80,14 @@ function Team({ manager, team }) {
 }
 
 export default function Home() {
+  const { isLoadingUsers, users } = useUsers({
+    leagueId,
+  });
   const [filter, setFilter] = React.useState('');
+
+  if (isLoadingUsers) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -64,18 +114,20 @@ export default function Home() {
           onChange={(event) => setFilter(event.target.value)}
         >
           <option value="">All managers</option>
-          {teams.map(({ manager }) => (
-            <option key={manager} value={manager}>
-              {manager}
+          {users.map(({ display_name }) => (
+            <option key={display_name} value={display_name}>
+              {display_name}
             </option>
           ))}
         </select>
 
         <section>
-          {teams
-            .filter(({ manager }) => (filter ? manager === filter : true))
+          {users
+            .filter(({ display_name }) =>
+              filter ? display_name === filter : true
+            )
             .map((data) => (
-              <Team key={data.manager} {...data} />
+              <Team key={data.display_name} {...data} />
             ))}
         </section>
       </main>
