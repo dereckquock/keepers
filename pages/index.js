@@ -3,7 +3,6 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import playerAuctionValues from '../data/players-2022';
 import { usePlayers } from '../queries/usePlayers';
 import { usePreviousDraftResults } from '../queries/usePreviousDraftResults';
 import { useRosters } from '../queries/useRosters';
@@ -50,15 +49,21 @@ function Team({ user_id, display_name, avatar, metadata }) {
       {roster.players.map((playerId) => {
         const player = players[playerId];
         const playerName = `${player.first_name} ${player.last_name}`;
-        const cost = previousDraftResultsPlayerIds.includes(playerId)
-          ? `$${playerAuctionValues[playerName]}`
-          : 'TBD';
+        const auctionValue = parseInt(
+          previousDraftResults.find((pick) => pick.player_id === playerId)
+            ?.metadata?.amount,
+          10
+        );
+        const cost =
+          previousDraftResultsPlayerIds.includes(playerId) && auctionValue
+            ? `$${Math.round(auctionValue + auctionValue * 0.4)}`
+            : 'TBD';
 
         /**
          * calculate the auction value cost for the player
          *
          * 1. if the player was drafted (player was in previous draft results),
-         *    use the calculated draft values from `data/players-<DRAFT_YEAR>.js`
+         *    use the calculated draft values from the previous draft results
          * 2. if the player was undrafted, use the current average auction value
          *    from fantasypros https://draftwizard.fantasypros.com/editor/createFromProjections.jsp?sport=nfl&scoringSystem=HALF&showAuction=Y&teams=12&tb=200&QB=1&RB=2&WR=2&TE=1&DST=1&K=1&BN=5&WR/RB/TE=1
          */
