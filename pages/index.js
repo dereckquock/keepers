@@ -73,8 +73,8 @@ function Team({ user_id, display_name, avatar, metadata }) {
         const cost =
           previousDraftResultsPlayerIds.includes(playerId) && auctionValue
             ? auctionValue
-            : auctionDraftValues[playerName] || 0;
-        const positiveCost = cost < 0 ? 0 : cost;
+            : auctionDraftValues[playerName] || 1;
+        const positiveCost = cost < 0 ? 1 : cost;
         const costWithInterest = Math.ceil(positiveCost + positiveCost * 0.4);
 
         return (
