@@ -20,13 +20,39 @@ function Team({ user_id, display_name, avatar, metadata }) {
   const { isLoadingAuctionDraftValues, auctionDraftValues } =
     useAuctionDraftValues();
 
+  const Header = () => (
+    <h2
+      style={{
+        marginTop: '2.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '1rem',
+      }}
+    >
+      <Image
+        src={`https://sleepercdn.com/avatars/thumbs/${avatar}`}
+        alt="Avatar image"
+        width={50}
+        height={50}
+        className={styles.avatar}
+      />
+      <span>{display_name}</span>
+      {metadata.team_name ? <span> | {metadata.team_name}</span> : null}
+    </h2>
+  );
+
   if (
     isLoadingPlayers ||
     isLoadingRosters ||
     isLoadingPreviousDraftResults ||
     isLoadingAuctionDraftValues
   ) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Header />
+        <p className={styles.player}>Loading players...</p>
+      </div>
+    );
   }
 
   const previousDraftResultsPlayerIds = previousDraftResults.map(
@@ -36,24 +62,7 @@ function Team({ user_id, display_name, avatar, metadata }) {
 
   return (
     <div>
-      <h2
-        style={{
-          marginTop: '2.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-        }}
-      >
-        <Image
-          src={`https://sleepercdn.com/avatars/thumbs/${avatar}`}
-          alt="Avatar image"
-          width={50}
-          height={50}
-          className={styles.avatar}
-        />
-        <span>{display_name}</span>
-        {metadata.team_name ? <span> | {metadata.team_name}</span> : null}
-      </h2>
+      <Header />
       {roster.players.map((playerId) => {
         /**
          * calculate the auction value cost for the player
