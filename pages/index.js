@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import { useAuctionDraftValues } from '../queries/useAuctionDraftValues';
 import { usePlayers } from '../queries/usePlayers';
 import { usePreviousDraftResults } from '../queries/usePreviousDraftResults';
 import { useRosters } from '../queries/useRosters';
@@ -16,8 +17,15 @@ function Team({ user_id, display_name, avatar, metadata }) {
   const { isLoadingRosters, rosters } = useRosters();
   const { isLoadingPreviousDraftResults, previousDraftResults } =
     usePreviousDraftResults({ leagueId, user_id });
+  const { isLoadingAuctionDraftValues, auctionDraftValues } =
+    useAuctionDraftValues();
 
-  if (isLoadingPlayers || isLoadingRosters || isLoadingPreviousDraftResults) {
+  if (
+    isLoadingPlayers ||
+    isLoadingRosters ||
+    isLoadingPreviousDraftResults ||
+    isLoadingAuctionDraftValues
+  ) {
     return <div>Loading...</div>;
   }
 
@@ -56,8 +64,10 @@ function Team({ user_id, display_name, avatar, metadata }) {
         );
         const cost =
           previousDraftResultsPlayerIds.includes(playerId) && auctionValue
-            ? `$${Math.round(auctionValue + auctionValue * 0.4)}`
-            : 'TBD';
+            ? auctionValue
+            : auctionDraftValues[playerName] || 0;
+        const positiveCost = cost < 0 ? 0 : cost;
+        const costWithInterest = Math.round(positiveCost + positiveCost * 0.4);
 
         /**
          * calculate the auction value cost for the player
@@ -76,7 +86,7 @@ function Team({ user_id, display_name, avatar, metadata }) {
             })}
           >
             <div>{playerName}</div>
-            <div className={styles.cost}>{cost}</div>
+            <div className={styles.cost}>${costWithInterest}</div>
           </div>
         );
       })}
