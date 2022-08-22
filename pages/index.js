@@ -55,6 +55,14 @@ function Team({ user_id, display_name, avatar, metadata }) {
         {metadata.team_name ? <span> | {metadata.team_name}</span> : null}
       </h2>
       {roster.players.map((playerId) => {
+        /**
+         * calculate the auction value cost for the player
+         *
+         * 1. if the player was drafted (player was in previous draft results),
+         *    use the calculated draft values from the previous draft results
+         * 2. if the player was undrafted, use the current average auction value
+         *    from fantasypros https://draftwizard.fantasypros.com/editor/createFromProjections.jsp?sport=nfl&scoringSystem=HALF&showAuction=Y&teams=12&tb=200&QB=1&RB=2&WR=2&TE=1&DST=1&K=1&BN=5&WR/RB/TE=1
+         */
         const player = players[playerId];
         const playerName = `${player.first_name} ${player.last_name}`;
         const auctionValue = parseInt(
@@ -68,15 +76,6 @@ function Team({ user_id, display_name, avatar, metadata }) {
             : auctionDraftValues[playerName] || 0;
         const positiveCost = cost < 0 ? 0 : cost;
         const costWithInterest = Math.round(positiveCost + positiveCost * 0.4);
-
-        /**
-         * calculate the auction value cost for the player
-         *
-         * 1. if the player was drafted (player was in previous draft results),
-         *    use the calculated draft values from the previous draft results
-         * 2. if the player was undrafted, use the current average auction value
-         *    from fantasypros https://draftwizard.fantasypros.com/editor/createFromProjections.jsp?sport=nfl&scoringSystem=HALF&showAuction=Y&teams=12&tb=200&QB=1&RB=2&WR=2&TE=1&DST=1&K=1&BN=5&WR/RB/TE=1
-         */
 
         return (
           <div
