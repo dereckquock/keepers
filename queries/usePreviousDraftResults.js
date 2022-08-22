@@ -21,7 +21,7 @@ export const usePreviousDraftResults = ({ leagueId, user_id }) => {
         if (!user_id) return picks;
         return picks.filter(({ picked_by }) => picked_by === user_id);
       },
-      // staleTime: 86400000, // set stale time to 1 day
+      staleTime: 86400000, // set stale time to 1 day
     }
   );
 
