@@ -75,7 +75,7 @@ function Team({ user_id, display_name, avatar, metadata }) {
             ? auctionValue
             : auctionDraftValues[playerName] || 0;
         const positiveCost = cost < 0 ? 0 : cost;
-        const costWithInterest = Math.round(positiveCost + positiveCost * 0.4);
+        const costWithInterest = Math.ceil(positiveCost + positiveCost * 0.4);
 
         return (
           <div
