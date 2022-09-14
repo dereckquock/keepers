@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRosterPoints } from '../queries/useRosterPoints';
-import { useRosters } from '../queries/useRosters';
+import { initialLeagueId, useRosters } from '../queries/useRosters';
 import styles from '../styles/Home.module.css';
 
 function Scores({ isLoadingRosters, leagueId, weekNumber, rosters }) {
@@ -103,8 +103,7 @@ function Scores({ isLoadingRosters, leagueId, weekNumber, rosters }) {
 }
 
 export default function TopPoints() {
-  const { initialLeagueId, isLoadingRosters, leagueId, rosters, setLeagueId } =
-    useRosters();
+  const { isLoadingRosters, leagueId, rosters, setLeagueId } = useRosters();
   const [weekNumber, setWeekNumber] = useState(1);
   const { wins, ties, losses } = rosters?.[0]?.settings || {};
   const currentWeekNumber = Math.max(1, wins + ties + losses);

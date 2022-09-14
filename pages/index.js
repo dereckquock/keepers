@@ -6,17 +6,15 @@ import React from 'react';
 import { useAuctionDraftValues } from '../queries/useAuctionDraftValues';
 import { usePlayers } from '../queries/usePlayers';
 import { usePreviousDraftResults } from '../queries/usePreviousDraftResults';
-import { useRosters } from '../queries/useRosters';
+import { initialLeagueId, useRosters } from '../queries/useRosters';
 import { useUsers } from '../queries/useUsers';
 import styles from '../styles/Home.module.css';
-
-const leagueId = '721172044753993728';
 
 function Team({ user_id, display_name, avatar, metadata }) {
   const { isLoadingPlayers, players } = usePlayers();
   const { isLoadingRosters, rosters } = useRosters();
   const { isLoadingPreviousDraftResults, previousDraftResults } =
-    usePreviousDraftResults({ leagueId, user_id });
+    usePreviousDraftResults({ leagueId: initialLeagueId, user_id });
   const { isLoadingAuctionDraftValues, auctionDraftValues } =
     useAuctionDraftValues();
 
@@ -103,9 +101,7 @@ function Team({ user_id, display_name, avatar, metadata }) {
 }
 
 export default function Home() {
-  const { isLoadingUsers, users } = useUsers({
-    leagueId,
-  });
+  const { isLoadingUsers, users } = useUsers({ leagueId: initialLeagueId });
   const [filter, setFilter] = React.useState('');
 
   if (isLoadingUsers) {

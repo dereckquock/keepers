@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 
-const initialLeagueId = '721172044753993728';
+export const initialLeagueId = '784354698986725376';
 
 export const useRosters = () => {
   const [leagueId, setLeagueId] = useState(initialLeagueId);
@@ -18,7 +18,6 @@ export const useRosters = () => {
   );
 
   return {
-    initialLeagueId,
     isLoadingRosters,
     leagueId,
     rosters,
