@@ -53,7 +53,7 @@ function Team({ user_id, display_name, avatar, metadata }) {
     );
   }
 
-  const previousDraftResultsPlayerIds = previousDraftResults.map(
+  const previousDraftResultsPlayerIds = (previousDraftResults || []).map(
     (pick) => pick.player_id
   );
   const roster = rosters.find((roster) => roster.owner_id === user_id);
@@ -112,7 +112,10 @@ export default function Home() {
     <div className={styles.container}>
       <Head>
         <title>Keepers</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="icon"
+          href="/favicon.ico"
+        />
       </Head>
 
       <main>
@@ -123,7 +126,10 @@ export default function Home() {
           </Link>
         </header>
 
-        <label htmlFor="filter" style={{ marginRight: 10 }}>
+        <label
+          htmlFor="filter"
+          style={{ marginRight: 10 }}
+        >
           Filter manager
         </label>
         <select
@@ -134,7 +140,10 @@ export default function Home() {
         >
           <option value="">All managers</option>
           {users.map(({ display_name }) => (
-            <option key={display_name} value={display_name}>
+            <option
+              key={display_name}
+              value={display_name}
+            >
               {display_name}
             </option>
           ))}
@@ -146,7 +155,10 @@ export default function Home() {
               filter ? display_name === filter : true
             )
             .map((data) => (
-              <Team key={data.display_name} {...data} />
+              <Team
+                key={data.display_name}
+                {...data}
+              />
             ))}
         </section>
       </main>

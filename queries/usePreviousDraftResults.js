@@ -7,9 +7,7 @@ export const usePreviousDraftResults = ({ leagueId, user_id }) => {
       const drafts = await fetch(
         `https://api.sleeper.app/v1/league/${leagueId}/drafts`
       ).then((res) => res.json());
-      const previousDraft = drafts.find(
-        ({ season }) => season === `${new Date().getFullYear() - 1}`
-      );
+      const previousDraft = drafts.at(-1);
       const previousDraftPicks = await fetch(
         `https://api.sleeper.app/v1/draft/${previousDraft.draft_id}/picks`
       ).then((res) => res.json());
