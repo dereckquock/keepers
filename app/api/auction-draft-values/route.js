@@ -1,8 +1,9 @@
 import * as cheerio from 'cheerio';
+import { NextResponse } from 'next/server';
 
-export default async function getValues(req, res) {
+export async function GET() {
   const html = await fetch(
-    'https://draftwizard.fantasypros.com/editor/createFromProjections.jsp?sport=nfl&scoringSystem=HALF&showAuction=Y&teams=12&tb=200&QB=1&RB=2&WR=2&TE=1&DST=1&K=1&BN=5&WR/RB/TE=1'
+    'https://draftwizard.fantasypros.com/editor/createFromProjections.jsp?sport=nfl&scoringSystem=HALF&showAuction=Y&teams=12&tb=200&QB=1&RB=2&WR=2&TE=1&DST=1&K=1&BN=5&WR/RB/TE=1',
   ).then((res) => res.text());
   const $ = cheerio.load(html);
   const tableItems = $('#OverallTable > tbody > tr');
@@ -22,5 +23,5 @@ export default async function getValues(req, res) {
     };
   }, {});
 
-  return res.status(200).json({ playerValues });
+  return NextResponse.json({ playerValues });
 }

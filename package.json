@@ -9,15 +9,18 @@
     "start": "next start"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.32.6",
+    "@tanstack/react-query-devtools": "^4.32.6",
+    "@vercel/analytics": "^1.0.2",
     "cheerio": "^1.0.0-rc.12",
     "classnames": "^2.3.1",
-    "next": "^12.2.5",
+    "next": "^13.4.16",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-query": "^3.39.2"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "eslint": "8.22.0",
-    "eslint-config-next": "12.2.5"
+    "eslint": "^8.47.0",
+    "eslint-config-next": "^13.4.16",
+    "prettier": "^3.0.2"
   }
 }
