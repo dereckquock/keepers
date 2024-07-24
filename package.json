@@ -12,6 +12,7 @@
     "@tanstack/react-query": "^4.32.6",
     "@tanstack/react-query-devtools": "^4.32.6",
     "@vercel/analytics": "^1.0.2",
+    "@vercel/speed-insights": "^1.0.12",
     "cheerio": "^1.0.0-rc.12",
     "classnames": "^2.3.1",
     "next": "^14.2.5",
