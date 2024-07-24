@@ -14,7 +14,7 @@
     "@vercel/analytics": "^1.0.2",
     "cheerio": "^1.0.0-rc.12",
     "classnames": "^2.3.1",
-    "next": "^13.4.16",
+    "next": "^14.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
