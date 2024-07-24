@@ -1,56 +1,42 @@
-'use client';
-
-import { useState } from 'react';
-import styles from '../../styles/Home.module.css';
-import { useUsers } from '../queries/useUsers';
 import { Team } from './Team';
 
-export function Rosters() {
-  const { isLoadingUsers, users } = useUsers({
-    leagueId: '784354698986725376',
-  });
-  const [filter, setFilter] = useState('');
+async function getUsers({ leagueId }) {
+  const response = await fetch(
+    `https://api.sleeper.app/v1/league/${leagueId}/users`,
+    { next: { revalidate: 172800000 } }, // 2 days
+  );
 
-  if (isLoadingUsers) {
-    return <div>Loading...</div>;
+  if (!response.ok) {
+    throw new Error('Failed to fetch users');
   }
+
+  return response.json();
+}
+
+async function getPlayers() {
+  const response = await fetch('https://api.sleeper.app/v1/players/nfl');
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch players');
+  }
+
+  return response.json();
+}
+
+export async function Rosters() {
+  const users = await getUsers({ leagueId: '784354698986725376' });
+  const players = await getPlayers();
 
   return (
     <>
-      <label
-        htmlFor="filter"
-        style={{ marginRight: 10 }}
-      >
-        Filter manager
-      </label>
-      <select
-        className={styles.formControl}
-        id="filter"
-        onChange={(event) => setFilter(event.target.value)}
-        value={filter}
-      >
-        <option value="">All managers</option>
-        {users.map(({ display_name }) => (
-          <option
-            key={display_name}
-            value={display_name}
-          >
-            {display_name}
-          </option>
-        ))}
-      </select>
-
       <section>
-        {users
-          .filter(({ display_name }) =>
-            filter ? display_name === filter : true,
-          )
-          .map((data) => (
-            <Team
-              key={data.display_name}
-              {...data}
-            />
-          ))}
+        {users.map((data) => (
+          <Team
+            key={data.display_name}
+            players={players}
+            {...data}
+          />
+        ))}
       </section>
     </>
   );

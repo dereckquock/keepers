@@ -1,10 +1,61 @@
+import * as cheerio from 'cheerio';
 import classNames from 'classnames';
 import Image from 'next/image';
 import styles from '../../styles/Home.module.css';
-import { useAuctionDraftValues } from './queries/useAuctionDraftValues';
-import { usePlayers } from './queries/usePlayers';
-import { usePreviousDraftResults } from './queries/usePreviousDraftResults';
-import { useRosters } from './queries/useRosters';
+
+async function getRosters() {
+  const response = await fetch(
+    `https://api.sleeper.app/v1/league/784354698986725376/rosters`,
+    { next: { revalidate: 86400000 } }, // 1 day
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch rosters');
+  }
+
+  return response.json();
+}
+
+async function getPreviousDraftResults({ userId }) {
+  const drafts = await fetch(
+    `https://api.sleeper.app/v1/league/784354698986725376/drafts`,
+    { next: { revalidate: 86400000 } }, // 1 day
+  ).then((res) => res.json());
+  const previousDraft = drafts.at(-1);
+  const previousDraftPicks = await fetch(
+    `https://api.sleeper.app/v1/draft/${previousDraft.draft_id}/picks`,
+    { next: { revalidate: 86400000 } }, // 1 day
+  ).then((res) => res.json());
+
+  if (!userId) return previousDraftPicks;
+  return previousDraftPicks.filter(({ picked_by }) => picked_by === userId);
+}
+
+async function getAuctionDraftValues() {
+  const html = await fetch(
+    'https://draftwizard.fantasypros.com/editor/createFromProjections.jsp?sport=nfl&scoringSystem=HALF&showAuction=Y&teams=12&tb=200&QB=1&RB=2&WR=2&TE=1&DST=1&K=1&BN=5&WR/RB/TE=1',
+    { next: { revalidate: 86400000 } }, // 1 day
+  ).then((res) => res.text());
+  const $ = cheerio.load(html);
+  const tableItems = $('#OverallTable > tbody > tr');
+
+  const playerValues = Array.from(tableItems).reduce((playerMap, item) => {
+    const nameWithInfo = $(item).find('td:nth-child(2)').text() || '';
+    const nameWithoutExtras = nameWithInfo
+      .replace('Jr.', '')
+      .replace('Sr.', '')
+      .replace(/I/g, '');
+    const name = nameWithoutExtras.replace(/\(.+/, '').trim();
+    const value = $(item).find('.RealValue').text();
+
+    return {
+      ...playerMap,
+      [name]: parseInt(value, 10),
+    };
+  }, {});
+
+  return playerValues;
+}
 
 function Header({ avatar, displayName, teamName }) {
   return (
@@ -29,31 +80,16 @@ function Header({ avatar, displayName, teamName }) {
   );
 }
 
-export function Team({ user_id, display_name, avatar, metadata }) {
-  const { isLoadingPlayers, players } = usePlayers();
-  const { isLoadingRosters, rosters } = useRosters();
-  const { isLoadingPreviousDraftResults, previousDraftResults } =
-    usePreviousDraftResults({ leagueId: '784354698986725376', user_id });
-  const { isLoadingAuctionDraftValues, auctionDraftValues } =
-    useAuctionDraftValues();
-
-  if (
-    isLoadingPlayers ||
-    isLoadingRosters ||
-    isLoadingPreviousDraftResults ||
-    isLoadingAuctionDraftValues
-  ) {
-    return (
-      <div>
-        <Header
-          avatar={avatar}
-          displayName={display_name}
-          teamName={metadata.team_name}
-        />
-        <p className={styles.player}>Loading players...</p>
-      </div>
-    );
-  }
+export async function Team({
+  user_id,
+  display_name,
+  avatar,
+  metadata,
+  players,
+}) {
+  const rosters = await getRosters();
+  const previousDraftResults = await getPreviousDraftResults({ user_id });
+  const auctionDraftValues = await getAuctionDraftValues();
 
   const previousDraftResultsPlayerIds = (previousDraftResults || []).map(
     (pick) => pick.player_id,
