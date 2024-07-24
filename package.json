@@ -14,13 +14,13 @@
     "@vercel/analytics": "^1.0.2",
     "cheerio": "^1.0.0-rc.12",
     "classnames": "^2.3.1",
-    "next": "^13.4.16",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "eslint": "^8.47.0",
-    "eslint-config-next": "^13.4.16",
+    "eslint-config-next": "^14.2.5",
     "prettier": "^3.0.2"
   }
 }
