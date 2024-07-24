@@ -12,7 +12,7 @@ export default function Page() {
             className="button"
             href="/points"
           >
-            🔥💯 Top Scorers 👉
+            💯 Top Scorers
           </Link>
         </header>
         <Rosters />

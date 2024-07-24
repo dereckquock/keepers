@@ -15,6 +15,7 @@ body {
   font-family: monospace, sans-serif;
   background: var(--dark);
   color: var(--light);
+  scroll-behavior: smooth;
 }
 
 * {

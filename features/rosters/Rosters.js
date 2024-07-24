@@ -30,6 +30,28 @@ export async function Rosters() {
   return (
     <>
       <section>
+        <div
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          {users.map(({ user_id, display_name }) => {
+            return (
+              <a
+                key={user_id}
+                href={`#${user_id}`}
+                style={{
+                  color: 'var(--gold)',
+                  textDecoration: 'underline',
+                }}
+              >
+                {display_name}
+              </a>
+            );
+          })}
+        </div>
         {users.map((data) => (
           <Team
             key={data.display_name}

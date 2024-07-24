@@ -97,7 +97,7 @@ export async function Team({
   const roster = rosters.find((roster) => roster.owner_id === user_id);
 
   return (
-    <div>
+    <div id={user_id}>
       <Header
         avatar={avatar}
         displayName={display_name}
