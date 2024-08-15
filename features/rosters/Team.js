@@ -5,7 +5,7 @@ import styles from '../../styles/Home.module.css';
 
 async function getRosters() {
   const response = await fetch(
-    `https://api.sleeper.app/v1/league/784354698986725376/rosters`,
+    `https://api.sleeper.app/v1/league/1124827000867938304/rosters`,
     { next: { revalidate: 86400000 } }, // 1 day
   );
 
@@ -18,7 +18,7 @@ async function getRosters() {
 
 async function getPreviousDraftResults({ userId }) {
   const drafts = await fetch(
-    `https://api.sleeper.app/v1/league/784354698986725376/drafts`,
+    `https://api.sleeper.app/v1/league/1124827000867938304/drafts`,
     { next: { revalidate: 86400000 } }, // 1 day
   ).then((res) => res.json());
   const previousDraft = drafts.at(-1);

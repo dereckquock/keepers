@@ -72,7 +72,7 @@ function useRosterPoints({ leagueId, weekNumber, rosters }) {
 }
 
 function useRosters() {
-  const [leagueId, setLeagueId] = useState('784354698986725376');
+  const [leagueId, setLeagueId] = useState('1124827000867938304');
   const { isLoading: isLoadingRosters, data: rosters } = useQuery({
     queryKey: ['rosters', { leagueId }],
     queryFn: async () => {
@@ -224,7 +224,7 @@ function Main() {
         </label>
         <input
           className={styles.formControl}
-          defaultValue={'784354698986725376'}
+          defaultValue={'1124827000867938304'}
           id="leagueId"
           name="leagueId"
           placeholder="Enter League ID"
