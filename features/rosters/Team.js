@@ -17,20 +17,19 @@ async function getRosters() {
   return response.json();
 }
 
-async function getPreviousDraftResults({ userId }) {
+async function getPreviousDraftResults({ user_id }) {
   const drafts = await fetch(
     `https://api.sleeper.app/v1/league/${previousLeagueId}/drafts`,
     { next: { revalidate: 86400000 } }, // 1 day
   ).then((res) => res.json());
   const previousDraft = drafts.at(-1);
-  console.log('🚀 ~ getPreviousDraftResults ~ previousDraft:', drafts);
   const previousDraftPicks = await fetch(
     `https://api.sleeper.app/v1/draft/${previousDraft.draft_id}/picks`,
     { next: { revalidate: 86400000 } }, // 1 day
   ).then((res) => res.json());
 
-  if (!userId) return previousDraftPicks;
-  return previousDraftPicks.filter(({ picked_by }) => picked_by === userId);
+  if (!user_id) return previousDraftPicks;
+  return previousDraftPicks.filter(({ picked_by }) => picked_by === user_id);
 }
 
 async function getAuctionDraftValues() {
@@ -92,7 +91,6 @@ export async function Team({
   const rosters = await getRosters();
   const previousDraftResults = await getPreviousDraftResults({ user_id });
   const auctionDraftValues = await getAuctionDraftValues();
-
   const previousDraftResultsPlayerIds = (previousDraftResults || []).map(
     (pick) => pick.player_id,
   );
