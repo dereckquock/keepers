@@ -8,6 +8,7 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { currentLeagueId } from '../../features/rosters/constants';
 import styles from '../../styles/Home.module.css';
 
 const queryClient = new QueryClient();
@@ -72,7 +73,7 @@ function useRosterPoints({ leagueId, weekNumber, rosters }) {
 }
 
 function useRosters() {
-  const [leagueId, setLeagueId] = useState('1124827000867938304');
+  const [leagueId, setLeagueId] = useState(currentLeagueId);
   const { isLoading: isLoadingRosters, data: rosters } = useQuery({
     queryKey: ['rosters', { leagueId }],
     queryFn: async () => {
@@ -224,7 +225,7 @@ function Main() {
         </label>
         <input
           className={styles.formControl}
-          defaultValue={'1124827000867938304'}
+          defaultValue={currentLeagueId}
           id="leagueId"
           name="leagueId"
           placeholder="Enter League ID"

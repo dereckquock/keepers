@@ -2,10 +2,11 @@ import * as cheerio from 'cheerio';
 import classNames from 'classnames';
 import Image from 'next/image';
 import styles from '../../styles/Home.module.css';
+import { currentLeagueId, previousLeagueId } from './constants';
 
 async function getRosters() {
   const response = await fetch(
-    `https://api.sleeper.app/v1/league/1124827000867938304/rosters`,
+    `https://api.sleeper.app/v1/league/${currentLeagueId}/rosters`,
     { next: { revalidate: 86400000 } }, // 1 day
   );
 
@@ -18,10 +19,11 @@ async function getRosters() {
 
 async function getPreviousDraftResults({ userId }) {
   const drafts = await fetch(
-    `https://api.sleeper.app/v1/league/1124827000867938304/drafts`,
+    `https://api.sleeper.app/v1/league/${previousLeagueId}/drafts`,
     { next: { revalidate: 86400000 } }, // 1 day
   ).then((res) => res.json());
   const previousDraft = drafts.at(-1);
+  console.log('🚀 ~ getPreviousDraftResults ~ previousDraft:', drafts);
   const previousDraftPicks = await fetch(
     `https://api.sleeper.app/v1/draft/${previousDraft.draft_id}/picks`,
     { next: { revalidate: 86400000 } }, // 1 day

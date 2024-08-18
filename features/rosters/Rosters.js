@@ -1,9 +1,10 @@
+import { currentLeagueId } from './constants';
 import { Team } from './Team';
 
 async function getUsers({ leagueId }) {
   const response = await fetch(
     `https://api.sleeper.app/v1/league/${leagueId}/users`,
-    { next: { revalidate: 172800000 } }, // 2 days
+    { next: { revalidate: 86400000 } }, // 1 day
   );
 
   if (!response.ok) {
@@ -24,7 +25,7 @@ async function getPlayers() {
 }
 
 export async function Rosters() {
-  const users = await getUsers({ leagueId: '1124827000867938304' });
+  const users = await getUsers({ leagueId: currentLeagueId });
   const players = await getPlayers();
 
   return (
