@@ -9,20 +9,38 @@
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.32.6",
-    "@tanstack/react-query-devtools": "^4.32.6",
-    "@vercel/analytics": "^1.0.2",
-    "@vercel/speed-insights": "^1.0.12",
-    "cheerio": "^1.0.0-rc.12",
-    "classnames": "^2.3.1",
-    "next": "^14.2.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@tanstack/react-query": "^5.83.0",
+    "@tanstack/react-query-devtools": "^5.83.0",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
+    "cheerio": "^1.1.0",
+    "classnames": "^2.5.1",
+    "next": "^15.4.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "eslint": "^8.47.0",
-    "eslint-config-next": "^14.2.5",
-    "prettier": "^3.0.2"
+    "@eslint-react/eslint-plugin": "^1.52.3",
+    "@eslint/compat": "^1.3.1",
+    "@next/eslint-plugin-next": "^15.4.1",
+    "@tanstack/eslint-plugin-query": "^5.81.2",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/node": "24.0.14",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "eslint": "^9.31.0",
+    "eslint-config-next": "^15.4.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-import-x": "^4.16.1",
+    "eslint-plugin-jest-dom": "^5.5.0",
+    "eslint-plugin-perfectionist": "^4.15.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^16.3.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.37.0"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
