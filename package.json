@@ -15,7 +15,7 @@
     "@vercel/speed-insights": "^1.0.12",
     "cheerio": "^1.0.0-rc.12",
     "classnames": "^2.3.1",
-    "next": "^14.2.5",
+    "next": "^14.2.30",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
