@@ -61,7 +61,7 @@ export async function Team({
         return (
           <div
             className={classNames(styles.player, {
-              [styles.isSelected]: false, // set if player is selected in player config
+              [styles.isSelected || '']: false, // set if player is selected in player config
             })}
             key={playerId}
           >
