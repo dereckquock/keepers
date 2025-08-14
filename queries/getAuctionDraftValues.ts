@@ -22,14 +22,13 @@ export const getAuctionDraftValues = cache(async () => {
       const nameWithInfo = $(item).find('td:nth-child(2)').text() || '';
       const nameWithoutExtras = nameWithInfo
         .replace('Jr.', '')
-        .replace('Sr.', '')
-        .replace(/I/g, '');
+        .replace('Sr.', '');
       const name = nameWithoutExtras.replace(/\(.+/, '').trim();
       const value = $(item).find('.RealValue').text();
 
       return {
         ...playerMap,
-        [name]: parseInt(value, 10),
+        [name]: Math.max(1, parseInt(value, 10)),
       };
     },
     {},
