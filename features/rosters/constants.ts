@@ -1,2 +1,2 @@
-export const previousLeagueId = '992197606426103808';
-export const currentLeagueId = '1124827000867938304';
+export const previousLeagueId = '1124827000867938304';
+export const currentLeagueId = '1180404989268750336';

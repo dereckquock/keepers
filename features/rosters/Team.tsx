@@ -46,9 +46,16 @@ export async function Team({
         const playerName =
           `${player?.first_name || ''} ${player?.last_name || ''}`.trim() ||
           '🏈';
+        const previousDraftResultsPlayer = previousDraftResults.find(
+          (pick) => pick.player_id === playerId,
+        );
+        console.log('🚀 ~ Team ~ player:', player);
+        console.log(
+          '🚀 ~ Team ~ previousDraftResultsPlayer:',
+          previousDraftResultsPlayer,
+        );
         const auctionValue = parseInt(
-          previousDraftResults.find((pick) => pick.player_id === playerId)
-            ?.metadata?.amount || '0',
+          previousDraftResultsPlayer?.metadata?.amount || '0',
           10,
         );
         const cost =
