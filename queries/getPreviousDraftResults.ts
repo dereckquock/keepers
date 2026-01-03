@@ -2,11 +2,16 @@
 
 import { cache } from 'react';
 
-import { previousLeagueId } from '../features/rosters/constants';
 import { type DraftPick, type DraftResults } from '../types';
 
 export const getPreviousDraftResults = cache(
-  async ({ user_id }: { user_id: string }) => {
+  async ({
+    previousLeagueId,
+    user_id,
+  }: {
+    previousLeagueId: string;
+    user_id: string;
+  }) => {
     const draftsResponse = await fetch(
       `https://api.sleeper.app/v1/league/${previousLeagueId}/drafts`,
       { next: { revalidate: 86400000 } }, // 1 day

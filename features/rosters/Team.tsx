@@ -10,14 +10,17 @@ import { type Player, type User } from '../../types';
 export async function Team({
   currentLeagueId,
   players,
+  previousLeagueId,
   user,
 }: {
   currentLeagueId: string;
   players: Record<string, Player>;
+  previousLeagueId: string;
   user: User;
 }) {
   const rosters = await getRosters({ leagueId: currentLeagueId });
   const previousDraftResults = await getPreviousDraftResults({
+    previousLeagueId,
     user_id: user.user_id,
   });
   const auctionDraftValues = await getAuctionDraftValues();
@@ -48,11 +51,6 @@ export async function Team({
           '🏈';
         const previousDraftResultsPlayer = previousDraftResults.find(
           (pick) => pick.player_id === playerId,
-        );
-        console.log('🚀 ~ Team ~ player:', player);
-        console.log(
-          '🚀 ~ Team ~ previousDraftResultsPlayer:',
-          previousDraftResultsPlayer,
         );
         const auctionValue = parseInt(
           previousDraftResultsPlayer?.metadata?.amount || '0',

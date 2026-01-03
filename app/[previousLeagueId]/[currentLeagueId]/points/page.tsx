@@ -7,44 +7,89 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
-import { currentLeagueId } from '../../features/rosters/constants';
-import { getMatchups } from '../../queries/getMatchups';
-import { getRosters } from '../../queries/getRosters';
-import { getUsers } from '../../queries/getUsers';
-import styles from '../../styles/Home.module.css';
-import { type Roster } from '../../types';
+import { getMatchups } from '../../../../queries/getMatchups';
+import { getRosters } from '../../../../queries/getRosters';
+import { getUsers } from '../../../../queries/getUsers';
+import styles from '../../../../styles/Home.module.css';
+import { type Roster } from '../../../../types';
 
 const queryClient = new QueryClient();
 
+const ReactQueryDevtoolsProduction = lazy(() =>
+  import('@tanstack/react-query-devtools/build/modern/production.js').then(
+    (d) => ({
+      default: d.ReactQueryDevtools,
+    }),
+  ),
+);
+
 export default function Page() {
+  const params = useParams<{
+    currentLeagueId?: string | string[];
+    previousLeagueId?: string | string[];
+  }>();
+  const previousLeagueId = Array.isArray(params.previousLeagueId)
+    ? params.previousLeagueId[0]
+    : params.previousLeagueId;
+  const currentLeagueId = Array.isArray(params.currentLeagueId)
+    ? params.currentLeagueId[0]
+    : params.currentLeagueId;
+  const previousSegment = previousLeagueId || 'none';
+  const leagueHomeHref =
+    currentLeagueId ? `/${previousSegment}/${currentLeagueId}` : '';
+  const [showDevtools, setShowDevtools] = useState(false);
+
+  useEffect(() => {
+    // @ts-expect-error
+    window.toggleDevtools = () => setShowDevtools((old) => !old);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className={styles.container}>
         <main>
-          <h1 className={styles.title}>
-            🔥💰 Points &amp; Benches (╯°□°)╯︵ ┻━┻ 💰🔥
-          </h1>
-          <Main />
+          <header>
+            {leagueHomeHref ? (
+              <div style={{ marginBottom: '1rem' }}>
+                <Link
+                  className="button"
+                  href={leagueHomeHref}
+                >
+                  🏠 League Home
+                </Link>
+              </div>
+            ) : null}
+            <h1 className={styles.title}>
+              🔥💰 Points &amp; Benches (╯°□°)╯︵ ┻━┻ 💰🔥
+            </h1>
+          </header>
+          <Main currentLeagueId={currentLeagueId ?? ''} />
         </main>
       </div>
       <ReactQueryDevtools />
+      {showDevtools && (
+        <Suspense fallback={null}>
+          <ReactQueryDevtoolsProduction />
+        </Suspense>
+      )}
     </QueryClientProvider>
   );
 }
 
 async function fetchScores({
   leagueId,
-  rosters,
   weekNumber,
 }: {
   leagueId: string;
-  rosters: Roster[] | undefined;
   weekNumber: string;
 }) {
   const users = await getUsers({ leagueId });
   const matchups = await getMatchups({ leagueId, weekNumber });
+  const rosters = await getRosters({ leagueId });
 
   const results = matchups.map((roster) => {
     const { players_points, points, roster_id } = roster;
@@ -73,8 +118,8 @@ async function fetchScores({
   };
 }
 
-function Main() {
-  const { isLoadingRosters, leagueId, rosters, setLeagueId } = useRosters();
+function Main({ currentLeagueId }: { currentLeagueId: string }) {
+  const { isLoadingRosters, rosters } = useRosters(currentLeagueId);
   const [weekNumber, setWeekNumber] = useState('1');
   const { losses, ties, wins } = rosters?.[0]?.settings || {};
   const currentWeekNumber = Math.min(
@@ -91,42 +136,6 @@ function Main() {
 
   return (
     <>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-
-          const formControlsCollection = event.currentTarget.elements;
-          const leagueId = formControlsCollection.namedItem(
-            'leagueId',
-          ) as HTMLInputElement;
-
-          setLeagueId(leagueId.value);
-        }}
-        style={{ alignItems: 'center', display: 'flex', gap: '1rem' }}
-      >
-        <label
-          htmlFor="leagueId"
-          style={{ marginRight: 10 }}
-        >
-          League ID
-        </label>
-        <input
-          className={styles.formControl}
-          defaultValue={currentLeagueId}
-          id="leagueId"
-          name="leagueId"
-          placeholder="Enter League ID"
-          style={{ textAlign: 'center' }}
-          type="tel"
-        />
-        <input
-          aria-label="Submit"
-          className="button"
-          type="submit"
-          value="Submit"
-        />
-      </form>
-
       <div
         style={{
           alignItems: 'center',
@@ -160,8 +169,7 @@ function Main() {
 
       <Scores
         isLoadingRosters={isLoadingRosters}
-        leagueId={leagueId}
-        rosters={rosters}
+        leagueId={currentLeagueId}
         weekNumber={weekNumber}
       />
     </>
@@ -171,17 +179,14 @@ function Main() {
 function Scores({
   isLoadingRosters,
   leagueId,
-  rosters,
   weekNumber,
 }: {
   isLoadingRosters: boolean;
   leagueId: string;
-  rosters: Roster[] | undefined;
   weekNumber: string;
 }) {
   const { isLoadingRosterPoints, rosterPoints } = useRosterPoints({
     leagueId,
-    rosters,
     weekNumber,
   });
 
@@ -277,20 +282,18 @@ function Scores({
 
 function useRosterPoints({
   leagueId,
-  rosters,
   weekNumber,
 }: {
   leagueId: string;
-  rosters: Roster[] | undefined;
   weekNumber: string;
 }) {
   const { data, isLoading } = useQuery({
-    enabled: !!leagueId && !!rosters?.length,
+    enabled: !!leagueId,
     queryFn: async () => {
-      return fetchScores({ leagueId, rosters, weekNumber });
+      return fetchScores({ leagueId, weekNumber });
     },
 
-    queryKey: ['points', { leagueId, rosters, weekNumber }],
+    queryKey: ['points', { leagueId, weekNumber }],
 
     // set stale time to 5 minutes
     staleTime: 300000,
@@ -302,8 +305,7 @@ function useRosterPoints({
   };
 }
 
-function useRosters() {
-  const [leagueId, setLeagueId] = useState(currentLeagueId);
+function useRosters(leagueId: string) {
   const { data: rosters, isLoading: isLoadingRosters } = useQuery<Roster[]>({
     enabled: !!leagueId,
     queryFn: () => getRosters({ leagueId }),
@@ -315,8 +317,6 @@ function useRosters() {
 
   return {
     isLoadingRosters,
-    leagueId,
     rosters,
-    setLeagueId,
   };
 }

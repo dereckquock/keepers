@@ -1,9 +1,14 @@
 import { getPlayers } from '../../queries/getPlayers';
 import { getUsers } from '../../queries/getUsers';
-import { currentLeagueId } from './constants';
 import { Team } from './Team';
 
-export async function Rosters() {
+export async function Rosters({
+  currentLeagueId,
+  previousLeagueId,
+}: {
+  currentLeagueId: string;
+  previousLeagueId: string;
+}) {
   const users = await getUsers({ leagueId: currentLeagueId });
   const players = await getPlayers();
 
@@ -36,6 +41,7 @@ export async function Rosters() {
           currentLeagueId={currentLeagueId}
           key={user.display_name}
           players={players}
+          previousLeagueId={previousLeagueId}
           user={user}
         />
       ))}
