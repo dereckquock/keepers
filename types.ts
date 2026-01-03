@@ -60,6 +60,11 @@ export type DraftSettings = {
   teams: number;
 };
 
+export type League = {
+  avatar?: null | string;
+  name: string;
+};
+
 export type Matchup = {
   custom_points: null;
   matchup_id: number;

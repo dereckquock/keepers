@@ -5,6 +5,7 @@ import { getBiggestRegularSeasonBlowoutWinner } from '../../../queries/getBigges
 import { getClosestRegularSeasonWin } from '../../../queries/getClosestRegularSeasonWin';
 import { getEasiestRegularSeasonSchedule } from '../../../queries/getEasiestRegularSeasonSchedule';
 import { getHardestRegularSeasonSchedule } from '../../../queries/getHardestRegularSeasonSchedule';
+import { getLeague } from '../../../queries/getLeague';
 import { getLongestRegularSeasonWinStreak } from '../../../queries/getLongestRegularSeasonWinStreak';
 import { getTopRegularSeasonScorer } from '../../../queries/getTopRegularSeasonScorer';
 import { getTopRegularSeasonWeeklyScorer } from '../../../queries/getTopRegularSeasonWeeklyScorer';
@@ -25,6 +26,7 @@ export default async function Page({
     : '';
   const pointsHref = `/${previousLeagueId}/${currentLeagueId}/points`;
   const [
+    league,
     topScorer,
     topWeeklyScorer,
     longestWinStreak,
@@ -34,6 +36,7 @@ export default async function Page({
     easiestSchedule,
   ] = currentLeagueId
     ? await Promise.all([
+        getLeague({ leagueId: currentLeagueId }),
         getTopRegularSeasonScorer({ leagueId: currentLeagueId }),
         getTopRegularSeasonWeeklyScorer({ leagueId: currentLeagueId }),
         getLongestRegularSeasonWinStreak({ leagueId: currentLeagueId }),
@@ -42,13 +45,47 @@ export default async function Page({
         getHardestRegularSeasonSchedule({ leagueId: currentLeagueId }),
         getEasiestRegularSeasonSchedule({ leagueId: currentLeagueId }),
       ])
-    : [null, null, null, null, null, null, null];
+    : [null, null, null, null, null, null, null, null];
+  const leagueAvatarUrl = league?.avatar
+    ? `https://sleepercdn.com/avatars/thumbs/${league.avatar}`
+    : undefined;
 
   return (
     <div className={styles.container}>
       <main>
         <header className={styles.header}>
-          <h1>League Home</h1>
+          <div
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+              gap: '0.75rem',
+            }}
+          >
+            {leagueAvatarUrl ? (
+              <Image
+                alt={`${league?.name ?? 'League'} avatar`}
+                className={styles.avatar}
+                height={50}
+                src={leagueAvatarUrl}
+                width={50}
+              />
+            ) : (
+              <div
+                style={{
+                  alignItems: 'center',
+                  background: 'var(--black)',
+                  borderRadius: '25px',
+                  display: 'flex',
+                  height: 50,
+                  justifyContent: 'center',
+                  width: 50,
+                }}
+              >
+                🏈
+              </div>
+            )}
+            <h1>{league?.name ?? 'League Home'}</h1>
+          </div>
           <div
             style={{
               alignItems: 'center',
