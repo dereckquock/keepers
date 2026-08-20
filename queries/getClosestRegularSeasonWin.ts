@@ -45,7 +45,7 @@ export const getClosestRegularSeasonWin = cache(
 
     let smallestMargin = Infinity;
     let smallestWeekNumber = 0;
-    let smallestWinnerRosterId: string | null = null;
+    let smallestWinnerRosterId: null | string = null;
     let smallestWinnerPoints = 0;
     let smallestLoserPoints = 0;
 
@@ -70,7 +70,7 @@ export const getClosestRegularSeasonWin = cache(
 
         let maxPoints = -Infinity;
         let minPoints = Infinity;
-        let winnerRosterId: string | null = null;
+        let winnerRosterId: null | string = null;
         let winnerCount = 0;
 
         group.forEach((matchup) => {

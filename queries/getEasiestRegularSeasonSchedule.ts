@@ -74,7 +74,7 @@ export const getEasiestRegularSeasonSchedule = cache(
       });
     });
 
-    let topRosterId: string | null = null;
+    let topRosterId: null | string = null;
     let lowestPointsAgainst = Infinity;
 
     pointsAgainstByRosterId.forEach((pointsAgainst, rosterId) => {

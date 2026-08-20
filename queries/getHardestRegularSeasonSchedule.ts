@@ -74,7 +74,7 @@ export const getHardestRegularSeasonSchedule = cache(
       });
     });
 
-    let topRosterId: string | null = null;
+    let topRosterId: null | string = null;
     let topPointsAgainst = -Infinity;
 
     pointsAgainstByRosterId.forEach((pointsAgainst, rosterId) => {
