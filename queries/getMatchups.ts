@@ -3,6 +3,7 @@
 import { cache } from 'react';
 
 import { type Matchup } from '../types';
+import { ONE_DAY_IN_SECONDS } from './constants';
 
 export const getMatchups = cache(
   async ({
@@ -14,7 +15,7 @@ export const getMatchups = cache(
   }) => {
     const response = await fetch(
       `https://api.sleeper.app/v1/league/${leagueId}/matchups/${weekNumber}`,
-      { next: { revalidate: 86400000 } }, // 1 day
+      { next: { revalidate: ONE_DAY_IN_SECONDS } },
     );
 
     if (!response.ok) {

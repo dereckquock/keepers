@@ -3,10 +3,16 @@
 import * as cheerio from 'cheerio';
 import { cache } from 'react';
 
+import {
+  type AuctionValueRow,
+  buildAuctionValueIndex,
+} from '../features/keepers/auctionValues';
+import { ONE_DAY_IN_SECONDS } from './constants';
+
 export const getAuctionDraftValues = cache(async () => {
   const response = await fetch(
     'https://draftwizard.fantasypros.com/editor/createFromProjections.jsp?sport=nfl&scoringSystem=HALF&showAuction=Y&teams=12&tb=200&QB=1&RB=2&WR=2&TE=1&DST=1&K=1&BN=5&WR/RB/TE=1',
-    { next: { revalidate: 86400000 } }, // 1 day
+    { next: { revalidate: ONE_DAY_IN_SECONDS } },
   );
 
   if (!response.ok) {
@@ -15,24 +21,27 @@ export const getAuctionDraftValues = cache(async () => {
 
   const html = await response.text();
   const $ = cheerio.load(html);
-  const tableItems = $('#OverallTable > tbody > tr');
 
-  const playerValues = Array.from(tableItems).reduce<Record<string, number>>(
-    (playerMap, item) => {
-      const nameWithInfo = $(item).find('td:nth-child(2)').text() || '';
-      const nameWithoutExtras = nameWithInfo
-        .replace('Jr.', '')
-        .replace('Sr.', '');
-      const name = nameWithoutExtras.replace(/\(.+/, '').trim();
-      const value = $(item).find('.RealValue').text();
+  const rows = Array.from($('#OverallTable > tbody > tr')).map<AuctionValueRow>(
+    (item) => {
+      // the cell reads like "Ja'Marr Chase (CIN - WR)"
+      const nameCell = $(item).find('td:nth-child(2)').text() || '';
+      const [, details = ''] = /\(([^)]*)\)/.exec(nameCell) ?? [];
+      const [team = '', position = ''] = details
+        .split('-')
+        .map((part) => part.trim());
 
       return {
-        ...playerMap,
-        [name]: Math.max(1, parseInt(value, 10)),
+        name: nameCell.replace(/\(.*/, '').trim(),
+        position,
+        team,
+        value: parseInt(
+          $(item).find('.RealValue').text().replace(/[^0-9]/g, ''),
+          10,
+        ),
       };
     },
-    {},
   );
 
-  return playerValues;
+  return buildAuctionValueIndex(rows);
 });
