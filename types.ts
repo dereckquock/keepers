@@ -1,7 +1,7 @@
 export type DraftPick = {
   draft_id: string;
   draft_slot: number;
-  is_keeper: null;
+  is_keeper: boolean | null;
   metadata: {
     amount: null | string;
     first_name: string;
@@ -115,12 +115,7 @@ export type Roster = {
   co_owners: null;
   keepers: string[];
   league_id: string;
-  metadata: {
-    p_nick_2374: string;
-    p_nick_7600: string;
-    record: string;
-    streak: string;
-  };
+  metadata: null | Record<string, string>;
   owner_id: string;
   player_map: null;
   players: string[];
@@ -144,6 +139,16 @@ export type RosterSettings = {
   waiver_budget_used: number;
   waiver_position: number;
   wins: number;
+};
+
+export type Transaction = {
+  adds: null | Record<string, number>;
+  drops: null | Record<string, number>;
+  leg: number;
+  roster_ids: number[];
+  status: string;
+  transaction_id: string;
+  type: string;
 };
 
 export type User = {

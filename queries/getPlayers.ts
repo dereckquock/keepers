@@ -3,11 +3,12 @@
 import { cache } from 'react';
 
 import { type Player } from '../types';
+import { ONE_DAY_IN_SECONDS } from './constants';
 
 export const getPlayers = cache(async () => {
   const response = await fetch(
     'https://api.sleeper.app/v1/players/nfl',
-    { next: { revalidate: 86400000 } }, // 1 day
+    { next: { revalidate: ONE_DAY_IN_SECONDS } },
   );
 
   if (!response.ok) {
