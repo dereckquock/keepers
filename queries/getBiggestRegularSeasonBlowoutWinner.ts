@@ -45,7 +45,7 @@ export const getBiggestRegularSeasonBlowoutWinner = cache(
 
     let topMargin = -Infinity;
     let topWeekNumber = 0;
-    let topWinnerRosterId: string | null = null;
+    let topWinnerRosterId: null | string = null;
     let topWinnerPoints = 0;
     let topLoserPoints = 0;
 
@@ -70,7 +70,7 @@ export const getBiggestRegularSeasonBlowoutWinner = cache(
 
         let maxPoints = -Infinity;
         let minPoints = Infinity;
-        let winnerRosterId: string | null = null;
+        let winnerRosterId: null | string = null;
         let winnerCount = 0;
 
         group.forEach((matchup) => {
